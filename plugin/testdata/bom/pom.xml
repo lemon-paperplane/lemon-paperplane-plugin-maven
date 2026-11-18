@@ -1,0 +1,29 @@
+<project>
+  <groupId>com.acme</groupId>
+  <artifactId>bom-app</artifactId>
+  <version>1</version>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <kotlin.version>1.9.25</kotlin.version>
+    <boot.version>3.3.4</boot.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-dependencies</artifactId><version>${boot.version}</version><type>pom</type><scope>import</scope></dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-webflux</artifactId></dependency>
+    <dependency><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-stdlib</artifactId></dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration><mainClass>com.acme.BomAppKt</mainClass></configuration>
+      </plugin>
+      <plugin><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-maven-plugin</artifactId><version>${kotlin.version}</version></plugin>
+    </plugins>
+  </build>
+</project>

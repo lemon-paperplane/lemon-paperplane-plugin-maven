@@ -1,0 +1,7 @@
+<project>
+  <parent><groupId>com.acme</groupId><artifactId>acme-parent</artifactId><version>1.0.0</version></parent>
+  <artifactId>acme-core</artifactId>
+  <dependencies>
+    <dependency><groupId>org.projectlombok</groupId><artifactId>lombok</artifactId><version>${lombok.version}</version><scope>provided</scope></dependency>
+  </dependencies>
+</project>

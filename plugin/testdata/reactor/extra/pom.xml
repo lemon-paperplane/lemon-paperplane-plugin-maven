@@ -1,0 +1,1 @@
+<project><parent><groupId>com.acme</groupId><artifactId>acme-parent</artifactId><version>1.0.0</version></parent><artifactId>acme-extra</artifactId></project>

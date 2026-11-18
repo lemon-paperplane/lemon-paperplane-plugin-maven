@@ -1,0 +1,309 @@
+{
+  "id": "maven",
+  "name": "%plugin.name%",
+  "version": "0.1.0",
+  "vendor": "Lemon Paperplane",
+  "description": "%plugin.description%",
+  "icon": "icons/maven.svg",
+  "category": "buildSystem",
+  "engines": {
+    "paperplane": ">=0.1.0 <0.2.0"
+  },
+  "protocol": 1,
+  "executable": "bin/paperplane-plugin-maven",
+  "dependencies": [
+    {
+      "id": "java"
+    }
+  ],
+  "activation": {
+    "files": [
+      "pom.xml"
+    ]
+  },
+  "contributes": {
+    "facets": [
+      {
+        "id": "maven",
+        "name": "Maven",
+        "icon": "icons/maven.svg",
+        "category": "buildSystem",
+        "priority": 40
+      }
+    ],
+    "toolchains": [
+      {
+        "kind": "maven",
+        "name": "Maven",
+        "icon": "icons/maven.svg",
+        "installable": true
+      }
+    ],
+    "runConfigurationTypes": [
+      {
+        "id": "maven-goal",
+        "name": "%runType.goal%",
+        "icon": "icons/maven.svg",
+        "facets": [
+          "maven"
+        ],
+        "options": [
+          {
+            "key": "goals",
+            "title": "%opt.goals%",
+            "type": "string",
+            "required": true,
+            "placeholder": "spring-boot:run"
+          },
+          {
+            "key": "profiles",
+            "title": "%opt.profiles%",
+            "type": "multiselect",
+            "optionsFrom": "maven.profiles"
+          },
+          {
+            "key": "args",
+            "title": "%opt.args%",
+            "type": "string",
+            "placeholder": "-DskipTests",
+            "info": "%opt.args.info%"
+          }
+        ]
+      }
+    ],
+    "services": [
+      "prepareClasspath",
+      "launchGoals"
+    ],
+    "sync": true,
+    "actions": [
+      {
+        "id": "sync",
+        "title": "%action.sync%",
+        "icon": "builtin:refresh-cw",
+        "facets": [
+          "maven"
+        ],
+        "group": "build",
+        "locations": [
+          "project.toolbar",
+          "project.menu"
+        ]
+      },
+      {
+        "id": "package",
+        "title": "%action.package%",
+        "icon": "builtin:package",
+        "facets": [
+          "maven"
+        ],
+        "group": "build",
+        "locations": [
+          "project.menu"
+        ]
+      },
+      {
+        "id": "install",
+        "title": "%action.install%",
+        "icon": "builtin:download",
+        "facets": [
+          "maven"
+        ],
+        "group": "build",
+        "locations": [
+          "project.menu"
+        ]
+      },
+      {
+        "id": "clean",
+        "title": "%action.clean%",
+        "icon": "builtin:trash-2",
+        "facets": [
+          "maven"
+        ],
+        "group": "build",
+        "locations": [
+          "project.menu"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "id": "maven.no-compiler",
+        "hint": "No compiler is provided",
+        "pattern": "No compiler is provided in this environment",
+        "severity": "error",
+        "title": "%diag.noCompiler.title%",
+        "message": "%diag.noCompiler.message%",
+        "fixes": [
+          {
+            "id": "useJdk",
+            "title": "%fix.useJdk%",
+            "kind": "setToolchain",
+            "params": {
+              "kind": "jdk",
+              "constraint": ">=8"
+            },
+            "recommended": true
+          }
+        ]
+      },
+      {
+        "id": "maven.enforcer-java",
+        "hint": "allowed range",
+        "pattern": "Detected JDK [Vv]ersion [\\w.\\-+]+ (?:\\([^)]*\\) )?is not in the allowed range \\[?(\\d+)",
+        "severity": "error",
+        "title": "%diag.enforcerJava.title%",
+        "message": "%diag.enforcerJava.message%",
+        "fixes": [
+          {
+            "id": "useJdk",
+            "title": "%fix.useNewerJdk%",
+            "kind": "setToolchain",
+            "params": {
+              "kind": "jdk",
+              "constraint": ">={1}"
+            },
+            "recommended": true
+          }
+        ]
+      },
+      {
+        "id": "maven.enforcer-maven",
+        "hint": "allowed range",
+        "pattern": "Detected Maven Version:? ([\\d.]+) is not in the allowed range \\[?([\\d.]+)",
+        "severity": "error",
+        "title": "%diag.enforcerMaven.title%",
+        "message": "%diag.enforcerMaven.message%",
+        "fixes": [
+          {
+            "id": "useMaven",
+            "title": "%fix.useNewerMaven%",
+            "kind": "setToolchain",
+            "params": {
+              "kind": "maven",
+              "constraint": ">={2}"
+            },
+            "recommended": true
+          }
+        ]
+      },
+      {
+        "id": "maven.resolve-deps",
+        "hint": "Could not resolve dependencies",
+        "pattern": "Could not resolve dependencies for project ([\\w.\\-]+:[\\w.\\-]+)",
+        "severity": "error",
+        "title": "%diag.resolveDeps.title%",
+        "message": "%diag.network.message%",
+        "fixes": [
+          {
+            "id": "retry",
+            "title": "%fix.retry%",
+            "kind": "reimport"
+          }
+        ]
+      },
+      {
+        "id": "maven.transfer",
+        "hint": "Could not transfer artifact",
+        "pattern": "Could not transfer artifact ([\\w.\\-]+:[\\w.\\-]+(?::[\\w.\\-]+)*) from/to ([\\w.\\-]+)",
+        "severity": "error",
+        "title": "%diag.transfer.title%",
+        "message": "%diag.network.message%",
+        "fixes": [
+          {
+            "id": "retry",
+            "title": "%fix.retry%",
+            "kind": "reimport"
+          }
+        ]
+      },
+      {
+        "id": "maven.not-found",
+        "hint": "was not found in",
+        "pattern": "([\\w.\\-]+:[\\w.\\-]+:[\\w.\\-]+:[\\w.\\-]+) was not found in (\\S+)",
+        "severity": "error",
+        "title": "%diag.notFound.title%",
+        "message": "%diag.notFound.message%"
+      },
+      {
+        "id": "maven.parent",
+        "hint": "Non-resolvable parent POM",
+        "pattern": "Non-resolvable parent POM for ([\\w.\\-]+:[\\w.\\-]+)",
+        "severity": "error",
+        "title": "%diag.parent.title%",
+        "message": "%diag.parent.message%",
+        "fixes": [
+          {
+            "id": "retry",
+            "title": "%fix.retry%",
+            "kind": "reimport"
+          }
+        ]
+      },
+      {
+        "id": "maven.blocked-mirror",
+        "hint": "Blocked mirror for repositories",
+        "pattern": "Blocked mirror for repositories: \\[([^\\]]+)\\]",
+        "severity": "error",
+        "title": "%diag.blockedMirror.title%",
+        "message": "%diag.blockedMirror.message%"
+      },
+      {
+        "id": "maven.timeout",
+        "hint": "timed out",
+        "pattern": "(?:Connect|Read|connect|read) timed out|Connection timed out",
+        "severity": "warning",
+        "title": "%diag.timeout.title%",
+        "message": "%diag.network.message%",
+        "fixes": [
+          {
+            "id": "retry",
+            "title": "%fix.retry%",
+            "kind": "reimport"
+          }
+        ]
+      },
+      {
+        "id": "maven.unauthorized",
+        "hint": "401",
+        "pattern": "status code: 401|Unauthorized \\(401\\)|401 Unauthorized",
+        "severity": "error",
+        "title": "%diag.unauthorized.title%",
+        "message": "%diag.unauthorized.message%"
+      },
+      {
+        "id": "maven.pkix",
+        "hint": "PKIX path building failed",
+        "pattern": "PKIX path building failed",
+        "severity": "error",
+        "title": "%diag.pkix.title%",
+        "message": "%diag.pkix.message%"
+      },
+      {
+        "id": "maven.unknown-phase",
+        "hint": "Unknown lifecycle phase",
+        "pattern": "Unknown lifecycle phase \\\"([^\\\"]+)\\\"",
+        "severity": "error",
+        "title": "%diag.unknownPhase.title%",
+        "message": "%diag.unknownPhase.message%"
+      },
+      {
+        "id": "maven.missing-profile",
+        "hint": "could not be activated because it does not exist",
+        "pattern": "The requested profile \\\"([^\\\"]+)\\\" could not be activated because it does not exist",
+        "severity": "warning",
+        "title": "%diag.missingProfile.title%",
+        "message": "%diag.missingProfile.message%"
+      },
+      {
+        "id": "maven.no-main",
+        "hint": "Unable to find a suitable main class",
+        "pattern": "Unable to find a suitable main class",
+        "severity": "error",
+        "title": "%diag.noMain.title%",
+        "message": "%diag.noMain.message%"
+      }
+    ]
+  }
+}
