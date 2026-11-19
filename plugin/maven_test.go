@@ -1,6 +1,7 @@
 package maven
 
 import (
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -49,6 +50,9 @@ func TestBomAndKotlin(t *testing.T) {
 }
 
 func TestParseEffective(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("夹具里是 Unix 绝对路径")
+	}
 	ps, err := parseEffective("/work/acme", "testdata/effective.xml")
 	if err != nil || len(ps) != 2 {
 		t.Fatalf("%v %d", err, len(ps))
